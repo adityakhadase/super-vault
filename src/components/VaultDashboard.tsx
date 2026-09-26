@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Check, FolderInput, Plus, Link2, Folder, ExternalLink, Image as ImageIcon, Search, Trash2, Play, Globe, Bookmark, Camera, FolderPlus, Pencil, ListVideo, Lock, Upload, X, Settings, Maximize, FileUp, FolderUp, FileText, Code, Archive, File, Download, Key, User, Eye, EyeOff, Phone, MapPin, Mail, Hash, ChevronRight, Copy } from 'lucide-react';
+import { Check, FolderInput, Plus, Link2, Folder, ExternalLink, Image as ImageIcon, Search, Trash2, MoreHorizontal, FolderOutput, Play, Globe, Bookmark, Camera, FolderPlus, Pencil, ListVideo, Lock, Upload, X, Settings, Maximize, FileUp, FolderUp, FileText, Code, Archive, File, Download, Key, User, Eye, EyeOff, Phone, MapPin, Mail, Hash, ChevronRight, Copy } from 'lucide-react';
 
 type Item = {
   id: string;
@@ -101,6 +101,7 @@ export default function VaultDashboard({
   // Secret Mode State
   const [secretMode, setSecretMode] = useState(false);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [openSecretMenuId, setOpenSecretMenuId] = useState<string | null>(null);
 
   // Secret Notepad State
   const [notepadActive, setNotepadActive] = useState(false);
@@ -853,7 +854,7 @@ export default function VaultDashboard({
           {/* Action Bar: Search & Quick Utilities */}
           <div className="w-full max-w-4xl flex flex-col sm:flex-row justify-between items-center gap-4">
             {/* Real-time Search */}
-            <div className="flex-1 w-full flex items-center bg-white border border-stone-200 rounded-2xl shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-zinc-200 focus-within:border-zinc-300 transition-all h-12 max-w-xs">
+            <div className="flex-1 w-full flex items-center bg-white border border-stone-200 rounded-2xl shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-zinc-200 focus-within:border-zinc-300 transition-all h-12 max-w-full sm:max-w-xs">
               <div className="pl-4 text-zinc-400">
                 <Search size={16} />
               </div>
@@ -867,10 +868,10 @@ export default function VaultDashboard({
             </div>
 
             {/* Link Paste Bar & New Folder */}
-            <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 flex-1 justify-end">
+            <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 flex-1 justify-end">
               
               {/* URL Input Form */}
-              <form onSubmit={(e) => { e.preventDefault(); processUrl(url); }} className="w-full max-w-sm relative flex">
+              <form onSubmit={(e) => { e.preventDefault(); processUrl(url); }} className="w-full max-w-full sm:max-w-sm relative flex">
                 <div className="w-full flex items-center bg-white border border-stone-200 rounded-2xl shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-zinc-200 focus-within:border-zinc-300 transition-all h-12">
                   <div className="pl-4 text-zinc-400">
                     <Link2 size={16} />
@@ -985,7 +986,7 @@ export default function VaultDashboard({
                   </form>
                 ) : (
                   <>
-                    <h2 className="text-xl font-medium text-zinc-800">{category.name}</h2>
+                    <h2 className="text-lg sm:text-xl font-medium text-zinc-800 truncate">{category.name}</h2>
                     <button 
                       onClick={() => {
                         setEditingCategoryId(category.id);
@@ -1037,7 +1038,7 @@ export default function VaultDashboard({
                     </button>
                   )}
 
-                  <span className="text-xs font-medium text-zinc-400 bg-zinc-50 px-3 py-1 rounded-full flex items-center">
+                  <span className="text-[10px] sm:text-xs font-medium text-zinc-400 bg-zinc-50 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full flex items-center shrink-0">
                     {category.items.length} {category.items.length === 1 ? 'item' : 'items'}
                   </span>
 
@@ -1045,7 +1046,7 @@ export default function VaultDashboard({
                   {!category.isSecret && (
                     <button 
                       onClick={() => handleDeleteFolder(category.id)}
-                      className="opacity-0 group-hover/folder:opacity-100 text-zinc-300 hover:text-red-500 transition-all p-1"
+                      className="opacity-100 sm:opacity-0 group-hover/folder:opacity-100 text-zinc-300 hover:text-red-500 transition-all p-1 shrink-0"
                       title="Delete Folder"
                     >
                       <Trash2 size={16} />
@@ -1055,13 +1056,13 @@ export default function VaultDashboard({
               </div>
               
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-                {category.items.slice(0, 6).map((item) => (
+                {category.items.slice(0, 6).map((item, index) => (
                   <div 
                     key={item.id} 
                     draggable
                     onDragStart={(e) => handleDragStart(e, item.id, category.id)}
                     onDragEnd={() => { setDraggedItem(null); setDragOverCategory(null); }}
-                    className={`group relative flex flex-col rounded-2xl overflow-hidden border bg-zinc-50/50 hover:bg-zinc-50 transition-all duration-200 h-full cursor-grab active:cursor-grabbing ${draggedItem?.id === item.id ? 'opacity-50 scale-95 border-zinc-300' : 'border-stone-100'}`}
+                    className={`group relative flex flex-col rounded-2xl overflow-hidden border bg-zinc-50/50 hover:bg-zinc-50 transition-all duration-200 h-full cursor-grab active:cursor-grabbing ${draggedItem?.id === item.id ? 'opacity-50 scale-95 border-zinc-300' : 'border-stone-100'} ${index >= 4 ? 'hidden sm:flex' : 'flex'}`}
                   >
                     {/* Platform Badge */}
                     <div className="absolute top-2 left-2 z-10 p-1.5 bg-white/90 backdrop-blur border border-stone-200 rounded-lg shadow-sm pointer-events-none">
@@ -1138,7 +1139,7 @@ export default function VaultDashboard({
                             onClick={(e) => { e.stopPropagation(); setOpenDropdownId(openDropdownId === item.id ? null : item.id); }}
                             className="text-xs font-medium bg-white border border-stone-200 text-zinc-600 hover:text-zinc-900 hover:border-stone-300 py-1 px-2.5 rounded-md shadow-sm transition-all inline-flex items-center space-x-1 shrink-0"
                           >
-                            <span>Move to</span>
+                            <span className="hidden sm:inline">Move to</span><FolderOutput size={14} className="sm:hidden" />
                           </button>
                           
                           {/* Dropdown Menu */}
@@ -1170,8 +1171,8 @@ export default function VaultDashboard({
                 ))}
               </div>
               
-              {category.items.length > 6 && (
-                <div className="mt-4 flex justify-center border-t border-stone-100 pt-4">
+              {category.items.length > 4 && (
+                <div className={`mt-4 flex justify-center border-t border-stone-100 pt-4 ${category.items.length <= 6 ? 'sm:hidden' : ''}`}>
                   <button 
                     onClick={() => setExpandedFolderModal(category)}
                     className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-full text-sm font-medium transition-colors shadow-sm flex items-center space-x-2"
@@ -1584,35 +1585,50 @@ export default function VaultDashboard({
 
                 <div className={`flex-1 overflow-y-auto grid ${isSecureMediaExpanded ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5' : 'grid-cols-2'} gap-4 pr-2 custom-scrollbar content-start transition-all duration-300 ${isMediaBlurred ? 'blur-md hover:blur-sm select-none' : ''}`}>
                   {(isSecureMediaExpanded ? secretMedia : secretMedia.slice(0, 12)).map(media => (
-                    <div key={media.id} className="relative group/media rounded-xl overflow-hidden bg-zinc-100 border border-stone-100 aspect-video flex items-center justify-center cursor-pointer shadow-sm hover:shadow-md transition-all" onClick={() => !isMediaBlurred && setPreviewMedia(media)}>
-                      {media.type === 'video' ? (
-                        <video src={`/api/secret-media/${media.id}`} className="w-full h-full object-cover pointer-events-none" />
-                      ) : (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={`/api/secret-media/${media.id}`} alt="Secret Media" className="w-full h-full object-cover pointer-events-none" />
-                      )}
-                      
-                      {/* Hover Overlay */}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/media:opacity-100 transition-opacity flex flex-col items-center justify-center">
-                        <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full text-white mt-4">
-                          <Maximize size={20} />
+                    <div key={media.id} className="relative group/media rounded-xl bg-zinc-100 border border-stone-100 aspect-video flex items-center justify-center cursor-pointer shadow-sm hover:shadow-md transition-all" onClick={() => !isMediaBlurred && setPreviewMedia(media)}>
+                      <div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
+                        {media.type === 'video' ? (
+                          <video src={`/api/secret-media/${media.id}`} className="w-full h-full object-cover pointer-events-none" />
+                        ) : (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={`/api/secret-media/${media.id}`} alt="Secret Media" className="w-full h-full object-cover pointer-events-none" />
+                        )}
+                        
+                        {/* Hover Overlay */}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/media:opacity-100 transition-opacity flex flex-col items-center justify-center">
+                          <div className="bg-white/20 backdrop-blur-sm p-2 rounded-full text-white mt-4 pointer-events-auto">
+                            <Maximize size={20} />
+                          </div>
+                          <span className="text-white text-xs mt-2 font-medium tracking-wide">EXPAND</span>
                         </div>
-                        <span className="text-white text-xs mt-2 font-medium tracking-wide">EXPAND</span>
-                      </div>
 
-                      {media.type === 'video' && (
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover/media:opacity-0 transition-opacity">
-                          <div className="bg-black/50 p-2 rounded-full"><Play size={20} className="text-white fill-white" /></div>
-                        </div>
-                      )}
+                        {media.type === 'video' && (
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none group-hover/media:opacity-0 transition-opacity">
+                            <div className="bg-black/50 p-2 rounded-full"><Play size={20} className="text-white fill-white" /></div>
+                          </div>
+                        )}
+                      </div>
                       
+                      {/* Mobile & Hover 3-dot Menu */}
                       <button 
-                        onClick={(e) => handleDeleteSecretMedia(media.id, e)}
-                        className="absolute top-2 right-2 p-1.5 bg-red-500/90 text-white rounded-lg opacity-0 group-hover/media:opacity-100 transition-opacity hover:bg-red-600 shadow-sm z-10"
-                        title="Delete Secure Media"
+                        onClick={(e) => { e.stopPropagation(); setOpenSecretMenuId(openSecretMenuId === media.id ? null : media.id); }}
+                        className="absolute top-2 right-2 p-1.5 bg-black/50 text-white rounded-lg lg:opacity-0 group-hover/media:opacity-100 transition-opacity hover:bg-black/70 shadow-sm z-20"
+                        title="Media Actions"
                       >
-                        <Trash2 size={14} />
+                        <MoreHorizontal size={16} />
                       </button>
+
+                      {/* Dropdown Menu */}
+                      <div className={`absolute top-10 right-2 w-32 bg-white border border-stone-200 rounded-xl shadow-lg transition-all z-30 overflow-hidden flex flex-col py-1 ${openSecretMenuId === media.id ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+                        <a href={`/api/secret-media/${media.id}`} download onClick={(e) => e.stopPropagation()} className="text-xs text-left px-3 py-2 text-zinc-700 hover:text-zinc-900 hover:bg-zinc-50 transition-colors flex items-center space-x-2">
+                          <Download size={12} />
+                          <span>Download</span>
+                        </a>
+                        <button onClick={(e) => { e.stopPropagation(); handleDeleteSecretMedia(media.id, e); setOpenSecretMenuId(null); }} className="text-xs text-left px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors flex items-center space-x-2">
+                          <Trash2 size={12} />
+                          <span>Delete</span>
+                        </button>
+                      </div>
                     </div>
                   ))}
                   
@@ -1740,7 +1756,7 @@ export default function VaultDashboard({
                    className="px-5 py-2 text-sm font-medium text-white bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg transition-colors flex items-center space-x-2"
                  >
                    {isMovingItems && <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
-                   <span>Move to Vault</span>
+                   <span className="hidden sm:inline">Move to Vault</span><FolderInput size={14} className="sm:hidden" />
                  </button>
                </div>
             </div>
@@ -1844,7 +1860,7 @@ export default function VaultDashboard({
                           onClick={(e) => { e.stopPropagation(); setOpenDropdownId(openDropdownId === item.id ? null : item.id); }}
                           className="text-xs font-medium bg-white border border-stone-200 text-zinc-600 hover:text-zinc-900 hover:border-stone-300 py-1 px-2.5 rounded-md shadow-sm transition-all inline-flex items-center space-x-1 shrink-0"
                         >
-                          <span>Move to</span>
+                          <span className="hidden sm:inline">Move to</span><FolderOutput size={14} className="sm:hidden" />
                         </button>
                         
                         {/* Dropdown Menu */}
