@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/public/uploads/
+/secret-uploads/
+/scratch/
+/stitch_super_vault_logo_branding/
