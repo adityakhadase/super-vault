@@ -1282,32 +1282,32 @@ export default function VaultDashboard({
       {/* Secret Notepad Modal */}
       {notepadActive && (
         <div className="fixed inset-0 z-50 bg-[#f9f9fb] flex flex-col animate-in fade-in duration-200 overflow-hidden">
-          <div className="flex justify-between items-center px-8 py-4 bg-white border-b border-stone-200 shadow-sm shrink-0">
-            <div className="flex items-center space-x-3 text-zinc-800">
-              <Lock size={20} className="text-zinc-600" />
-              <h2 className="text-xl font-medium tracking-tight">Secure Vault Notepad</h2>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-5 sm:px-8 py-4 gap-3 sm:gap-0 bg-white border-b border-stone-200 shadow-sm shrink-0 w-full overflow-hidden">
+            <div className="flex items-center space-x-2 sm:space-x-3 text-zinc-800 w-full sm:w-auto">
+              <Lock size={20} className="text-zinc-600 shrink-0" />
+              <h2 className="text-lg md:text-xl font-medium tracking-tight truncate flex-1 sm:flex-none">Secure Vault Notepad</h2>
               {isSavingNote ? (
-                <span className="ml-4 px-3 py-1 bg-stone-800 text-stone-100 rounded-md text-xs font-medium animate-pulse shadow-sm">Saving...</span>
+                <span className="shrink-0 px-2.5 py-1 bg-stone-800 text-stone-100 rounded-md text-[10px] md:text-xs font-medium animate-pulse shadow-sm">Saving...</span>
               ) : (
-                <span className="ml-4 px-3 py-1 bg-stone-800 text-stone-100 rounded-md text-xs font-medium shadow-sm">Saved securely</span>
+                <span className="shrink-0 px-2.5 py-1 bg-stone-800 text-stone-100 rounded-md text-[10px] md:text-xs font-medium shadow-sm whitespace-nowrap">Saved securely</span>
               )}
             </div>
-            <div className="flex items-center space-x-3">
-              <button onClick={() => handleUpdateCode('notepad')} className="text-xs flex items-center space-x-1 px-3 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-lg transition-colors mr-2" title="Change Access Code">
+            <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto">
+              <button onClick={() => handleUpdateCode('notepad')} className="flex-1 sm:flex-none text-xs sm:text-sm flex items-center justify-center space-x-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-lg transition-colors shrink-0" title="Change Access Code">
                 <Settings size={14} /> <span>Change Code</span>
               </button>
               <button 
                 onClick={() => setNotepadActive(false)}
-                className="text-sm font-medium text-zinc-500 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 px-4 py-2 rounded-lg transition-colors"
+                className="flex-1 sm:flex-none text-xs sm:text-sm flex items-center justify-center font-medium text-zinc-500 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors shrink-0"
               >
-                Close & Lock (Esc)
+                Lock <span className="hidden md:inline ml-1">(Esc)</span>
               </button>
             </div>
           </div>
           
-          <div className="flex-1 max-w-[96rem] w-full mx-auto p-4 md:p-8 flex flex-col lg:flex-row gap-6 overflow-hidden transition-all duration-300">
+          <div className="flex-1 max-w-[96rem] w-full mx-auto p-4 md:p-8 flex flex-col lg:flex-row gap-6 overflow-y-auto lg:overflow-hidden transition-all duration-300">
             {/* Notes Sidebar */}
-            <div className={`w-64 bg-white rounded-3xl p-4 border border-stone-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] h-full flex flex-col shrink-0 ${isSecureMediaExpanded ? 'hidden' : 'flex'}`}>
+            <div className={`order-2 lg:order-1 w-full lg:w-64 bg-white rounded-3xl p-4 border border-stone-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] h-64 lg:h-full flex flex-col shrink-0 ${isSecureMediaExpanded ? 'hidden' : 'flex'}`}>
               <div className="flex items-center justify-between mb-4 px-2">
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400">Notes</h3>
                 <button onClick={handleCreateNote} className="text-xs bg-zinc-800 text-white p-1.5 rounded-lg hover:bg-zinc-700 transition-colors">
@@ -1316,34 +1316,62 @@ export default function VaultDashboard({
               </div>
               <div className="flex-1 overflow-y-auto space-y-1 custom-scrollbar pr-1">
                 {secretNotes.map(n => (
-                  <div 
-                    key={n.id}
-                    onClick={() => setActiveNoteId(n.id)}
-                    role="button"
-                    tabIndex={0}
-                    className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all flex items-center justify-between group cursor-pointer ${activeNoteId === n.id ? 'bg-zinc-100 font-medium text-zinc-900' : 'text-zinc-600 hover:bg-zinc-50'}`}
-                  >
-                    <span className="truncate flex-1">{n.title || 'Untitled Note'}</span>
-                    <div className="flex items-center space-x-1 shrink-0">
-                      <button
-                        onClick={(e) => handleDeleteNote(n.id, e)}
-                        className="opacity-0 group-hover:opacity-100 p-1 text-zinc-400 hover:text-red-500 rounded transition-opacity"
-                        title="Delete Note"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                      <ChevronRight size={14} className={`${activeNoteId === n.id ? 'text-zinc-400' : 'opacity-0 group-hover:opacity-100 text-zinc-300'}`} />
+                  <div key={n.id} className="flex flex-col gap-1">
+                    <div 
+                      onClick={() => setActiveNoteId(activeNoteId === n.id ? null : n.id)}
+                      role="button"
+                      tabIndex={0}
+                      className={`w-full text-left px-3 py-2 rounded-xl text-sm transition-all flex items-center justify-between group cursor-pointer ${activeNoteId === n.id ? 'bg-zinc-100 font-medium text-zinc-900' : 'text-zinc-600 hover:bg-zinc-50'}`}
+                    >
+                      <span className="truncate flex-1">{n.title || 'Untitled Note'}</span>
+                      <div className="flex items-center space-x-1 shrink-0">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDeleteNote(n.id, e); }}
+                          className="opacity-100 lg:opacity-0 lg:group-hover:opacity-100 p-1 text-zinc-400 hover:text-red-500 rounded transition-opacity"
+                          title="Delete Note"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                        <ChevronRight size={14} className={`transition-transform duration-200 ${activeNoteId === n.id ? 'rotate-90 text-zinc-400' : 'opacity-100 lg:opacity-0 lg:group-hover:opacity-100 text-zinc-300'}`} />
+                      </div>
                     </div>
+                    {/* Mobile Accordion Editor */}
+                    {activeNoteId === n.id && (
+                      <div className="lg:hidden flex flex-col gap-3 p-4 bg-zinc-50 rounded-xl border border-stone-200 animate-in fade-in zoom-in-95 duration-200">
+                        <input 
+                          type="text" 
+                          value={n.title || ''} 
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            setSecretNotes(notes => notes.map(note => note.id === n.id ? { ...note, title: v } : note));
+                          }}
+                          placeholder="Note Title..."
+                          className="text-lg font-semibold bg-transparent outline-none text-zinc-900 placeholder-zinc-400"
+                        />
+                        <textarea
+                          value={n.content || ''}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            setSecretNotes(notes => notes.map(note => note.id === n.id ? { ...note, content: v } : note));
+                          }}
+                          placeholder="Write your note..."
+                          className="w-full bg-transparent outline-none resize-none text-zinc-700 text-sm leading-relaxed placeholder-zinc-400 min-h-[150px] custom-scrollbar"
+                        />
+                        <button onClick={(e) => { e.stopPropagation(); setActiveNoteId(null); }} className="mt-2 w-full text-center bg-zinc-200 hover:bg-zinc-300 text-zinc-700 py-2 rounded-lg text-xs font-medium transition-colors">
+                          Close Note
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Main Center Area */}
-            <div className={`flex-1 flex flex-col gap-6 h-full overflow-hidden ${isSecureMediaExpanded ? 'hidden' : 'flex'}`}>
+            <div className={`order-1 lg:order-2 flex-none lg:flex-1 flex flex-col gap-6 h-auto lg:h-full overflow-visible lg:overflow-hidden ${isSecureMediaExpanded ? 'hidden' : 'flex'}`}>
               
               {/* Credentials & Contacts Section */}
-              <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] shrink-0 flex flex-col max-h-[50%]">
+              <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] shrink-0 flex flex-col max-h-[400px] lg:max-h-[50%]">
                  <div className="flex items-center justify-between mb-4">
                    <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-400">Credentials & Contacts</h3>
                    <div className="flex items-center space-x-2">
@@ -1469,7 +1497,7 @@ export default function VaultDashboard({
               </div>
 
               {/* Active Notepad Area */}
-              <div className="flex-1 flex flex-col bg-white rounded-3xl p-6 border border-stone-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden">
+              <div className={`flex-1 flex-col bg-white rounded-3xl p-6 border border-stone-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] overflow-hidden hidden lg:flex`}>
                 {activeNoteId ? (
                   <>
                     <input 
@@ -1503,7 +1531,7 @@ export default function VaultDashboard({
             </div>
 
             {/* Media Area */}
-            <div className={`${isSecureMediaExpanded ? 'flex-1' : 'w-full lg:w-96'} flex flex-col bg-white rounded-3xl p-6 border border-stone-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] h-full overflow-hidden transition-all duration-300 gap-6`}>
+            <div className={`${isSecureMediaExpanded ? 'flex-1' : 'w-full lg:w-96'} order-3 flex flex-col bg-white rounded-3xl p-6 border border-stone-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] min-h-[600px] lg:min-h-0 lg:h-full overflow-hidden transition-all duration-300 gap-6`}>
               
               {/* Top Half: Upload Dropzone */}
               <div className="flex-none bg-zinc-50 border-2 border-dashed border-stone-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center transition-colors hover:bg-zinc-100 relative group">
